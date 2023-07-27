@@ -1,9 +1,11 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::env;
 
 fn main() {
     // file path
-    let file_path = "../data/puzzle_input.txt";
+    let args: Vec<String> = env::args().collect();
+    let file_path = &args[1];
 
     // Attempt to open the file
     let file = match File::open(file_path) {
