@@ -2,9 +2,25 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::env;
 
+static ROCK: String = "Rock".to_string();
+static PAPER: String = "Paper".to_string();
+static SCISSOR: String = "Scissors".to_string();
+
 struct Turn { 
     opponent: String,
     my_move: String,
+    wld: i32,
+}
+
+fn find_move(opponent: String) -> String { 
+
+
+}
+
+fn check_wld(mv: String) -> i32 {
+    if mv == "X" {return -1;}
+    else if mv == "Y" {return 0;}
+    else {return 1;}
 }
 
 fn clean_string(mv: String) -> String { 
@@ -14,30 +30,36 @@ fn clean_string(mv: String) -> String {
     else {return "".to_string();}
 }
 
-fn check(turn: Turn) -> i32 { 
-    let rock: String = "Rock".to_string();
-    let paper: String = "paper".to_string();
-    let scissor: String = "scissor".to_string();
+fn check2(turn: Turn) -> i32 { 
     let mut sum = 0;
-    if turn.my_move == rock { 
+    if turn.opponent == ROCK { 
+
+
+    }
+
+}
+
+fn check(turn: Turn) -> i32 { 
+    let mut sum = 0;
+    if turn.my_move == ROCK { 
         sum = sum + 1;
-        if turn.opponent == paper {return sum;}
-        else if turn.opponent == scissor {return sum+6;}
-        else if turn.opponent == rock {return sum+3;}
+        if turn.opponent == PAPER {return sum;}
+        else if turn.opponent == SCISSOR {return sum+6;}
+        else if turn.opponent == ROCK {return sum+3;}
         return -1;
     }
-    else if turn.my_move == paper { 
+    else if turn.my_move == PAPER { 
         sum = sum + 2;
-        if turn.opponent == paper {return sum+3;}
-        else if turn.opponent == scissor {return sum;}
-        else if turn.opponent == rock {return sum+6;}
+        if turn.opponent == PAPER {return sum+3;}
+        else if turn.opponent == SCISSOR {return sum;}
+        else if turn.opponent == ROCK {return sum+6;}
         else {return -1;}
     }
-    else if turn.my_move == scissor { 
+    else if turn.my_move == SCISSOR { 
         sum = sum + 3;
-        if turn.opponent == paper {return sum+6;}
-        else if turn.opponent == scissor {return sum+3;}
-        else if turn.opponent == rock {return sum;}
+        if turn.opponent == PAPER {return sum+6;}
+        else if turn.opponent == SCISSOR {return sum+3;}
+        else if turn.opponent == ROCK {return sum;}
         else {return -1;}
     }
     else {return -1;}
@@ -73,12 +95,9 @@ fn main() {
                 }
                 else { 
                     let splitted_string: Vec<&str> = line_content.split(" ").collect();
-                    let turn = Turn { 
-                        opponent: clean_string(splitted_string[0].to_string()),
-                        my_move: clean_string(splitted_string[1].to_string()),
-                    };
+                    let opponent = clean_string(splitted_string[0].to_string());
+                    let my_move = set_my_move(opponent, splitted_string[1].to_string());
                                 
-                    sum = sum + check(turn);
                 }
             }
             Err(_error) => { 
