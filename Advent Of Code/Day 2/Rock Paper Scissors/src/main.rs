@@ -2,41 +2,42 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::env;
 
-static ROCK: String = "Rock".to_string();
-static PAPER: String = "Paper".to_string();
-static SCISSOR: String = "Scissors".to_string();
+static ROCK: &str = "Rock";
+static PAPER: &str = "Paper";
+static SCISSOR: &str = "Scissors";
+static EMPTY: &str = "";
 
-struct Turn { 
-    opponent: String,
-    my_move: String,
-    wld: i32,
+struct Turn<'a> { 
+    opponent: &'a str,
+    my_move: &'a str,
 }
 
-fn find_move(opponent: String) -> String { 
-
-
+fn clean_string<'a>(mv: &str) -> &'a str { 
+    if (mv == "A") || (mv == "X") {return &ROCK}
+    else if (mv == "B") || (mv == "Y") { return &PAPER}
+    else if (mv == "C") || (mv == "Z") { return &SCISSOR}
+    else {return &EMPTY}
 }
 
-fn check_wld(mv: String) -> i32 {
-    if mv == "X" {return -1;}
-    else if mv == "Y" {return 0;}
-    else {return 1;}
-}
-
-fn clean_string(mv: String) -> String { 
-    if (mv == "A") || (mv == "X") {return "Rock".to_string();}
-    else if (mv == "B") || (mv == "Y") { return "Paper".to_string();}
-    else if (mv == "C") || (mv == "Z") { return "Scissors".to_string();}
-    else {return "".to_string();}
-}
-
-fn check2(turn: Turn) -> i32 { 
-    let mut sum = 0;
-    if turn.opponent == ROCK { 
-
-
+fn set_my_move<'a>(opponent: &str, outcome: &str) -> &'a str { 
+    if outcome == "X" { 
+        if opponent == ROCK {return &SCISSOR;}
+        else if opponent == PAPER {return &ROCK;}
+        else if opponent == SCISSOR {return &PAPER;}
+        else {return &EMPTY;}
     }
-
+    else if outcome == "Y" { 
+        if opponent == ROCK {return &ROCK;}
+        else if opponent == PAPER {return &PAPER;}
+        else if opponent == SCISSOR {return &SCISSOR;}
+        else {return &EMPTY;}
+    }
+    else { 
+        if opponent == ROCK {return &PAPER;}
+        else if opponent == PAPER {return &SCISSOR;}
+        else if opponent == SCISSOR {return &ROCK;}
+        else {return &EMPTY;}
+    }
 }
 
 fn check(turn: Turn) -> i32 { 
@@ -95,9 +96,14 @@ fn main() {
                 }
                 else { 
                     let splitted_string: Vec<&str> = line_content.split(" ").collect();
-                    let opponent = clean_string(splitted_string[0].to_string());
-                    let my_move = set_my_move(opponent, splitted_string[1].to_string());
-                                
+                    let opponent = clean_string(splitted_string[0]);
+                    let my_move = set_my_move(&opponent, splitted_string[1]);
+                    println!("{} {}", opponent, my_move);
+                    let turn = Turn { 
+                        opponent: &opponent,
+                        my_move: &my_move,
+                    };
+                    sum = sum + check(turn);
                 }
             }
             Err(_error) => { 
