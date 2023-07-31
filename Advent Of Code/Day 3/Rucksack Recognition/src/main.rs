@@ -1,44 +1,7 @@
 // use std::fs::File;
 // use std::io::{BufRead, BufReader};
-// use std::env;
+mod utils;
 
-struct Item {
-    ascii: u32,
-    priority: i32,
-}
-
-fn split_to_compartements(string: &str) -> (Vec<u32>,Vec<u32>) { 
-    let mut compartement_1: Vec<u32> = vec![];
-    let mut compartement_2: Vec<u32> = vec![];
-
-    let length = string.len();
-
-    for (i,item) in string.chars().enumerate() {
-        if i<length/2 { 
-            compartement_1.push(item as u32);
-        }
-        else {
-            compartement_2.push(item as u32);
-        }
-    }
-
-    return (compartement_1, compartement_2);
-}
-
-fn clean_compartement(compartement:&mut Vec<u32>) -> () {
-    for (i,item) in compartement.clone().into_iter().enumerate() {
-        for j in i+1..compartement.len() { 
-            if item == compartement[j] { 
-                compartement[j] = 0;
-            }
-            else { 
-                continue;
-            }
-        }
-    }
-
-    compartement.retain(|x| *x!=0);
-}
 
 fn main() {
 
@@ -57,38 +20,58 @@ fn main() {
     //     }
     // };
     
-    let string = "ttgJtRGJQctTZtZT";
-    let (mut compartement_1, mut compartement_2) = split_to_compartements(string);
-
-    println!("{:?}", compartement_1);
-    println!("{:?}", compartement_2);
-
-    clean_compartement(&mut compartement_1);
-    clean_compartement(&mut compartement_2);
-
-    println!("{:?}", compartement_1);
-    println!("{:?}", compartement_2);
-
-    let mut v: Vec<Item> = vec![];
+    let mut v: Vec<utils::Item> = vec![];
 
     for (j,i) in (0x41..0x5B).enumerate() {
-        let item = Item {
+        let item = utils::Item {
             ascii:i,
             priority:(j as i32) + 27,
         };
-        println!("{} {}", item.ascii, item.priority);
         v.push(item);
     }
 
     for (j,i) in (0x61..0x7B).enumerate() {
-        let item = Item {
+        let item = utils::Item {
             ascii:i,
             priority:(j as i32) + 1,
         };
-        println!("{} {}", item.ascii, item.priority);
 
         v.push(item);
     }
+
+    let string = "ttgJtRGJQctTZtZT";
+    let (mut compartement_1, mut compartement_2) = utils::split_to_compartements(string);
+
+    println!("{:?}", compartement_1);
+    println!("{:?}", compartement_2);
+
+    utils::clean_compartement(&mut compartement_1);
+    utils::clean_compartement(&mut compartement_2);
+    compartement_2.sort();
+
+    println!("{:?}", compartement_1);
+    println!("{:?}", compartement_2);
+    
+    let mut lost_and_found = vec![];
+    let mut index: i32;
+
+    for item in compartement_1 { 
+        index = utils::binary_search(item, compartement_2.clone(), 0, (compartement_2.len() as i32) - 1);
+        if index != -1 {
+            println!("Found");
+            println!("item {} was found at index {}", compartement_2[index as usize], index);
+            lost_and_found.push(item);
+        }
+    }
+
+    for item in lost_and_found {
+        index = utils::binary_search_item(item as u32, &v, 0, (v.len() as i32) - 1);
+        if index != -1 { 
+            println!("Found");
+            println!("item {} has priority {}", v[index as usize].ascii, v[index as usize].priority);
+        }
+    }
+
 
 
     // let reader = BufReader::new(file);
