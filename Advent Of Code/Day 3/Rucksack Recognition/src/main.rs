@@ -7,6 +7,39 @@ struct Item {
     priority: i32,
 }
 
+fn split_to_compartements(string: &str) -> (Vec<u32>,Vec<u32>) { 
+    let mut compartement_1: Vec<u32> = vec![];
+    let mut compartement_2: Vec<u32> = vec![];
+
+    let length = string.len();
+
+    for (i,item) in string.chars().enumerate() {
+        if i<length/2 { 
+            compartement_1.push(item as u32);
+        }
+        else {
+            compartement_2.push(item as u32);
+        }
+    }
+
+    return (compartement_1, compartement_2);
+}
+
+fn clean_compartement(compartement:&mut Vec<u32>) -> () {
+    for (i,item) in compartement.clone().into_iter().enumerate() {
+        for j in i+1..compartement.len() { 
+            if item == compartement[j] { 
+                compartement[j] = 0;
+            }
+            else { 
+                continue;
+            }
+        }
+    }
+
+    compartement.retain(|x| *x!=0);
+}
+
 fn main() {
 
     // let args: Vec<String> = env::args().collect();
@@ -25,31 +58,16 @@ fn main() {
     // };
     
     let string = "ttgJtRGJQctTZtZT";
-    let mut compartement_1: Vec<u32> = vec![];
-    let mut compartement_2: Vec<u32> = vec![];
-
-    let length = string.len();
-
-    for (i,item) in string.chars().enumerate() {
-        if i<length/2 { 
-            compartement_1.push(item as u32);
-        }
-        else {
-            compartement_2.push(item as u32);
-        }
-    }
-
-    compartement_2.sort();
-    compartement_1.sort();
+    let (mut compartement_1, mut compartement_2) = split_to_compartements(string);
 
     println!("{:?}", compartement_1);
     println!("{:?}", compartement_2);
-    
 
-    // for item in string.chars() { 
-    //     let encoding = item as u32; 
-    //     println!("{}", encoding);
-    // }
+    clean_compartement(&mut compartement_1);
+    clean_compartement(&mut compartement_2);
+
+    println!("{:?}", compartement_1);
+    println!("{:?}", compartement_2);
 
     let mut v: Vec<Item> = vec![];
 
