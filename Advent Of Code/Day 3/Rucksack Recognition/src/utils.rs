@@ -1,3 +1,5 @@
+#[derive(Clone)]
+#[derive(Debug)]
 pub struct Item {
     pub ascii: u32,
     pub priority: i32,
@@ -6,11 +8,12 @@ pub struct Item {
 pub fn binary_search_item(item: u32, vec: &Vec<Item>, lower: i32, upper: i32) -> i32 {
     if lower <= upper { 
         let mid = (lower+upper)/2;
+        // println!("{}", vec[mid as usize].ascii);
         if item == vec[mid as usize].ascii {
             return mid;
         } else if item < vec[mid as usize].ascii { 
-            return binary_search_item(item, vec, lower+1, upper);
-        } else {return binary_search_item(item, vec, lower, upper-1);}
+            return binary_search_item(item, vec, lower, mid-1);
+        } else {return binary_search_item(item, vec, mid+1, upper);}
     }
 
     return -1;
@@ -22,8 +25,8 @@ pub fn binary_search(item: u32, vec: Vec<u32>, lower: i32, upper: i32) -> i32 {
         if item == vec[mid as usize] {
             return mid;
         } else if item < vec[mid as usize] { 
-            return binary_search(item, vec, lower+1, upper);
-        } else {return binary_search(item, vec, lower, upper-1);}
+            return binary_search(item, vec, lower, mid-1);
+        } else {return binary_search(item, vec, mid+1, upper);}
     }
 
     return -1;
