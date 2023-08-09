@@ -32,6 +32,16 @@ pub fn binary_search(item: u32, vec: &Vec<u32>, lower: i32, upper: i32) -> i32 {
     return -1;
 }
 
+pub fn convert_to_ascii(string: String) -> Vec<u32> { 
+    let mut v: Vec<u32> = vec![];
+    
+    for item in string.chars() { 
+        v.push(item as u32);
+    }
+
+    return v;
+}
+
 pub fn split_to_compartements(string: String) -> (Vec<u32>,Vec<u32>) { 
     let mut compartement_1: Vec<u32> = vec![];
     let mut compartement_2: Vec<u32> = vec![];

@@ -1,6 +1,7 @@
+mod utils;
+use itertools::Itertools;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-mod utils;
 use std::env;
 
 
@@ -42,62 +43,42 @@ fn main() {
 
     // println!("{:?}", v);
 
-    let mut sum: i32 = 0;
-    let mut lost_and_found = vec![];
+    // let mut sum: i32 = 0;
+    // let mut lost_and_found = vec![];
 
     let reader = BufReader::new(file);
+    let mut sum = 0;
 
-    for line_result in reader.lines() { 
-        match line_result { 
-            Ok(line_content) => {
-                if line_content.is_empty() { 
-                    continue;
+    for line_result in &reader.lines().chunks(3) { 
+        let line_result: Vec<_> = line_result.collect();
+        let mut contents: Vec<_> = vec![];
+        for item in line_result { 
+            match item { 
+                Ok(content) => { 
+                    contents.push(utils::convert_to_ascii(content));
                 }
-                else { 
-                    let string = line_content;
-                    println!("{}", string);
-                    let (mut compartement_1, mut compartement_2) = utils::split_to_compartements(string);
-
-                    println!("{:?}", compartement_1);
-                    println!("{:?}", compartement_2);
-
-                    utils::clean_compartement(&mut compartement_1);
-                    utils::clean_compartement(&mut compartement_2);
-                    compartement_2.sort();
-
-                    // println!("{:?}", compartement_1);
-                    // println!("{:?}", compartement_2);
-                    
-                    let mut index: i32;
-
-                    for item in compartement_1.clone() { 
-                        index = utils::binary_search(item, &compartement_2, 0, (compartement_2.len() as i32) - 1);
-                        if index != -1 {
-                            // println!("Found");
-                            println!("item {} was found at index {}", compartement_2[index as usize], index);
-                            lost_and_found.push(item);
-                        }
-                    }
-
-                    println!("{:?}", lost_and_found);
-
-                    for item in lost_and_found.clone() {
-                        index = utils::binary_search_item(item as u32, &v, 0, (v.len() as i32) - 1);
-                        if index != -1 { 
-                            // println!("Found");
-                            println!("item {} has priority {}", v[index as usize].ascii, v[index as usize].priority);
-                            sum = sum + v[index as usize].priority;
-                        }
-                    }
-
-                    lost_and_found.clear();
-                    compartement_1.clear();
-                    compartement_2.clear();
+                Err(_error) => { 
+                    println!("Oopsies\n");
+                    return;
                 }
             }
-            Err(error) => { 
-                eprintln!("Error reading file {}", error);
-                return;
+
+        }
+
+        contents[1].sort();
+        contents[2].sort();
+
+        for item in contents[0].clone() { 
+            let index = utils::binary_search(item, &contents[1], 0, (contents[1].len() as i32) - 1);
+            if index != -1 {
+                let index2 = utils::binary_search(item, &contents[2], 0, (contents[2].len() as i32) - 1);
+                if index2 != -1 {
+                    let index3 = utils::binary_search_item(item as u32, &v, 0, (v.len() as i32) - 1);
+                        if index3 != -1 { 
+                            sum = sum + v[index3 as usize].priority;
+                            break;
+                        }
+                }
             }
         }
     }
