@@ -19,7 +19,7 @@ pub fn binary_search_item(item: u32, vec: &Vec<Item>, lower: i32, upper: i32) ->
     return -1;
 }
 
-pub fn binary_search(item: u32, vec: Vec<u32>, lower: i32, upper: i32) -> i32 {
+pub fn binary_search(item: u32, vec: &Vec<u32>, lower: i32, upper: i32) -> i32 {
     if lower <= upper { 
         let mid = (lower+upper)/2;
         if item == vec[mid as usize] {
@@ -32,7 +32,7 @@ pub fn binary_search(item: u32, vec: Vec<u32>, lower: i32, upper: i32) -> i32 {
     return -1;
 }
 
-pub fn split_to_compartements(string: &str) -> (Vec<u32>,Vec<u32>) { 
+pub fn split_to_compartements(string: String) -> (Vec<u32>,Vec<u32>) { 
     let mut compartement_1: Vec<u32> = vec![];
     let mut compartement_2: Vec<u32> = vec![];
 

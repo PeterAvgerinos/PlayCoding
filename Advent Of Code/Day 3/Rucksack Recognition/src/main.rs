@@ -42,10 +42,8 @@ fn main() {
 
     // println!("{:?}", v);
 
-
-
-
     let mut sum: i32 = 0;
+    let mut lost_and_found = vec![];
 
     let reader = BufReader::new(file);
 
@@ -53,28 +51,27 @@ fn main() {
         match line_result { 
             Ok(line_content) => {
                 if line_content.is_empty() { 
-                    return;
+                    continue;
                 }
                 else { 
                     let string = line_content;
                     println!("{}", string);
-                    let (mut compartement_1, mut compartement_2) = utils::split_to_compartements(&string);
+                    let (mut compartement_1, mut compartement_2) = utils::split_to_compartements(string);
 
                     println!("{:?}", compartement_1);
                     println!("{:?}", compartement_2);
 
                     utils::clean_compartement(&mut compartement_1);
                     utils::clean_compartement(&mut compartement_2);
-                    // compartement_2.sort();
+                    compartement_2.sort();
 
                     // println!("{:?}", compartement_1);
                     // println!("{:?}", compartement_2);
                     
-                    let mut lost_and_found = vec![];
                     let mut index: i32;
 
-                    for item in compartement_1 { 
-                        index = utils::binary_search(item, compartement_2.clone(), 0, (compartement_2.len() as i32) - 1);
+                    for item in compartement_1.clone() { 
+                        index = utils::binary_search(item, &compartement_2, 0, (compartement_2.len() as i32) - 1);
                         if index != -1 {
                             // println!("Found");
                             println!("item {} was found at index {}", compartement_2[index as usize], index);
@@ -82,7 +79,9 @@ fn main() {
                         }
                     }
 
-                    for item in lost_and_found {
+                    println!("{:?}", lost_and_found);
+
+                    for item in lost_and_found.clone() {
                         index = utils::binary_search_item(item as u32, &v, 0, (v.len() as i32) - 1);
                         if index != -1 { 
                             // println!("Found");
@@ -90,6 +89,10 @@ fn main() {
                             sum = sum + v[index as usize].priority;
                         }
                     }
+
+                    lost_and_found.clear();
+                    compartement_1.clear();
+                    compartement_2.clear();
                 }
             }
             Err(error) => { 
