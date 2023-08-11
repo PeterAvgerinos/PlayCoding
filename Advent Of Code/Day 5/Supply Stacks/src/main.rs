@@ -3,11 +3,19 @@ use std::fs::File;
 use std::env;
 
 fn is_item(item: char) -> bool { 
-    if ((item as u32) <= 90) && ((item as u32) >= 65) { 
-        return true;
-    }
+    if ((item as u32) <= 90) && ((item as u32) >= 65) { return true;}
     else { 
         return false;
+    }
+}
+
+fn play_move(amount_of_pops: i32, stacks: &mut Vec<Vec<char>>, source: i32, destination: i32) -> () {
+    for _ in 0..amount_of_pops {
+        let item_to_move = match stacks[(source-1) as usize].pop() {
+            Some(v) => v,
+            None => return
+        };
+        stacks[(destination-1) as usize].push(item_to_move);
     }
 }
 
@@ -69,13 +77,62 @@ fn main() {
                 }
             }
         }
+    }
+    // dbg!(stacks);
+
+
+
+    for i in 10..results.len() { 
+        let mv = match &results[i] { 
+            Ok(content) => content,
+            Err(_error) => return
+        };
+
+        let mut numbers: Vec<i32> = Vec::new();
+
+
+        let mut current_number = String::new();
+    
+        for c in mv.chars() {
+            if c.is_digit(10) {
+                current_number.push(c);
+            } else if !current_number.is_empty() {
+                numbers.push(current_number.parse::<i32>().unwrap());
+                current_number.clear();
+            }
+        }
+
+        if !current_number.is_empty() {
+            numbers.push(current_number.parse::<i32>().unwrap());
+        }
+        
+        let amount_of_pops = numbers[0];
+        let source = numbers[1];
+        let destination = numbers[2];
+
+        play_move(amount_of_pops, &mut stacks, source, destination);
+
+
 
 
 
     }
 
-    println!("{:?}", stacks[0]);
-    stacks[0].pop();
-    println!("{:?}", stacks[0]);
+    let mut on_top: Vec<String> = vec![];
 
+    for item in stacks { 
+        let top = match item.last() {
+            Some(content) => content,
+            None => return
+        };
+
+        on_top.push(top.to_string());
+    }
+
+
+    for item in on_top {
+        print!("{}", item);
+    }
+
+    println!();
 }
