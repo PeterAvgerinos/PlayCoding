@@ -33,7 +33,7 @@ fn main() {
     let mut contents_of_stacks_as_lists: Vec<Vec<char>> = Vec::new();
     let mut indices: Vec<usize> = Vec::new();
 
-    for i in (0..8).rev() {
+    for i in (0..=8).rev() {
         let line = match &results[i] {
             Ok(p) => p,
             Err(_error) => return
@@ -52,16 +52,30 @@ fn main() {
         contents_of_stacks_as_lists.push(line.chars().collect());
     }
 
-    let mut stacks: Vec<Vec<char>> = Vec::with_capacity(indices.len());
+    let mut stacks: Vec<Vec<char>> = Vec::new();
 
-    for item in contents_of_stacks_as_lists { 
-        for i in 0..indices.len() {
-            if is_item(item[i]) { 
-                stacks[i].push(item[i]);
-
-            }
-        }
+    for _ in &contents_of_stacks_as_lists { 
+        let stack: Vec<char> = Vec::new();
+        stacks.push(stack);
     }
 
-    dbg!(stacks);
+    for item in contents_of_stacks_as_lists { 
+        for (index,character) in item.iter().enumerate() { 
+            if is_item(*character) { 
+                for i in 0..indices.len() { 
+                    if index == indices[i] { 
+                        stacks[i].push(*character);
+                    }
+                }
+            }
+        }
+
+
+
+    }
+
+    println!("{:?}", stacks[0]);
+    stacks[0].pop();
+    println!("{:?}", stacks[0]);
+
 }
